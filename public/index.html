@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nexus</title>
+  <link rel="icon" href="https://ssl.gstatic.com/classroom/ic_product_classroom_96.png" />
+
+  <!-- Ultraviolet Scripts -->
+  <script src="/uv/uv.bundle.js"></script>
+  <script src="/uv/uv.config.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/uv/sw.js", {
+          scope: __uv$config.prefix,
+        });
+      });
+    }
+  </script>
+
+  <!-- Styling -->
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      height: 100%;
+      overflow: hidden;
+      color: white;
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-color: #0c0c0c;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .title {
+      font-size: 60px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      width: 300px;
+      padding: 12px 20px;
+      border-radius: 20px;
+      border: none;
+      font-size: 1em;
+      background-color: #222;
+      color: white;
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 12px 25px;
+      border-radius: 20px;
+      border: none;
+      background-color: #444;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .search-bar button:hover {
+      background-color: #666;
+    }
+
+    #backButton {
+      display: none;
+      padding: 12px 25px;
+      border-radius: 20px;
+      border: none;
+      background-color: #444;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: background-color 0.3s;
+    }
+
+    #backButton:hover {
+      background-color: #666;
+    }
+
+    iframe.iframeWindow {
+      display: none;
+      width: 90%;
+      height: 60%;
+      border: none;
+      border-radius: 16px;
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="particles-js"></div>
+
+  <div class="content">
+    <div class="title">Nexus</div>
+
+    <div class="search-bar">
+      <input type="text" id="urlInput" placeholder="Enter URL here" />
+      <button id="searchButton">Search Text</button>
+    </div>
+
+    <button id="backButton">Back</button>
+
+    <iframe id="iframeWindow" class="iframeWindow"></iframe>
+  </div>
+
+  <!-- Particles.js -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 400,
+          "density": { "enable": true, "value_area": 800 }
+        },
+        "color": { "value": "#888888" },
+        "shape": { "type": "circle" },
+        "opacity": {
+          "value": 0.6,
+          "random": true
+        },
+        "size": {
+          "value": 3,
+          "random": true
+        },
+        "line_linked": { "enable": false },
+        "move": {
+          "enable": true,
+          "speed": 3,
+          "direction": "bottom",
+          "out_mode": "out"
+        }
+      },
+      "interactivity": {
+        "events": {
+          "onhover": { "enable": false },
+          "onclick": { "enable": false },
+          "resize": true
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+
+  <!-- Your JS for search with back button -->
+  <script>
+    const urlInput = document.getElementById("urlInput");
+    const searchButton = document.getElementById("searchButton");
+    const backButton = document.getElementById("backButton");
+    const iframeWindow = document.getElementById("iframeWindow");
+    const searchBar = document.querySelector(".search-bar");
+
+    // Enter key triggers the button click
+    urlInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        searchButton.click();
+      }
+    });
+
+    searchButton.onclick = function (event) {
+      event.preventDefault();
+
+      let url = urlInput.value.trim();
+      let searchUrl = "https://www.google.com/search?q=";
+
+      if (!url.includes(".")) {
+        url = searchUrl + encodeURIComponent(url);
+      } else {
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+          url = "https://" + url;
+        }
+      }
+
+      iframeWindow.src = __uv$config.prefix + __uv$config.encodeUrl(url);
+
+      // Hide search bar and search button, show iframe and back button
+      searchBar.style.display = "none";
+      searchButton.style.display = "none";
+      backButton.style.display = "inline-block";
+      iframeWindow.style.display = "block";
+    };
+
+    backButton.onclick = function () {
+      // Clear iframe src
+      iframeWindow.src = "";
+
+      // Hide iframe and back button
+      iframeWindow.style.display = "none";
+      backButton.style.display = "none";
+
+      // Show search bar and search button
+      searchBar.style.display = "flex";
+      searchButton.style.display = "inline-block";
+    };
+  </script>
+</body>
+</html>
